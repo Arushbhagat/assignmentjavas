@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dice Game</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #0e0e0e;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .container {
+      background-color: #1c1c3c;
+      border-radius: 15px;
+      padding: 40px;
+      text-align: center;
+      width: 400px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+      margin: auto;
+    }
+    h1 {
+      color: #ffcc00;
+      margin-bottom: 20px;
+      font-size: 28px;
+    }
+    .balance {
+      color: #2ed573;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    .input-group input, select {
+      width: 80%;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: none;
+      background-color: #333;
+      color: white;
+    }
+    button {
+      background-color: #e63946;
+      color: white;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #d62c1a;
+    }
+    .slider-container, .multiplier-container {
+      margin-bottom: 20px;
+    }
+    .slider {
+      width: 80%;
+    }
+    .slider-value, .multiplier-value {
+      font-size: 20px;
+      color: white;
+      margin-top: 5px;
+    }
+    .result {
+      margin-top: 25px;
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+    }
+    footer {
+      text-align: center;
+      color: white;
+      margin-top: auto;
+      padding: 10px 0;
+      background-color: #1c1c3c;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dice Game</h1>
+    <div class="balance" id="balance">Balance: $100.00</div>
+
+    <!-- Deposit Money -->
+    <div class="input-group">
+      <input type="number" id="depositAmount" placeholder="Deposit Amount">
+      <button id="depositButton">Deposit Money</button>
+    </div>
+
+    <!-- Bet Amount -->
+    <div class="input-group">
+      <input type="number" id="betAmount" placeholder="Enter Bet Amount">
+    </div>
+
+    <!-- Bet Type -->
+    <div class="input-group">
+      <select id="betType">
+        <option value="under">Under</option>
+        <option value="over">Over</option>
+      </select>
+    </div>
+
+    <!-- Win Condition Slider -->
+    <div class="slider-container">
+      <label for="winCondition" style="color: white;">Win Condition (1-99)</label>
+      <input type="range" id="winCondition" class="slider" min="1" max="99" value="50">
+      <div class="slider-value">Win Condition: <span id="winConditionValue">50</span></div>
+    </div>
+
+    <!-- Multiplier Display -->
+    <div class="multiplier-container">
+      <label style="color: white;">Multiplier</label>
+      <div class="multiplier-value" id="multiplierValue">2.00</div>
+    </div>
+
+    <!-- Roll Button -->
+    <button id="rollButton">Roll Dice</button>
+    <div class="result" id="result">Place your bet and roll the dice!</div>
+  </div>
+
+  <footer>&copy; 2024 Arush Bhagat. All rights reserved.</footer>
+
+  <script>
+    let balance = 100.00;
+
+    // Function to calculate and update the multiplier
+    function updateMultiplier() {
+      const winCondition = parseFloat(document.getElementById("winCondition").value);
+      const payoutMultiplier = (winCondition > 50) 
+        ? (100 / (100 - winCondition)) 
+        : (100 / winCondition);
+      
+      document.getElementById("winConditionValue").textContent = winCondition;
+      document.getElementById("multiplierValue").textContent = payoutMultiplier.toFixed(2);
+    }
+
+    // Deposit money
+    function depositMoney() {
+      const depositAmount = parseFloat(document.getElementById("depositAmount").value);
+      if (isNaN(depositAmount) || depositAmount <= 0) {
+        alert("Please enter a valid deposit amount.");
+        return;
+      }
+      balance += depositAmount;
+      document.getElementById("balance").textContent = `Balance: $${balance.toFixed(2)}`;
+      document.getElementById("depositAmount").value = ''; // Clear input
+    }
+
+    // Roll Dice
+    function rollDice() {
+      const betAmount = parseFloat(document.getElementById("betAmount").value);
+      const winCondition = parseFloat(document.getElementById("winCondition").value);
+      const payoutMultiplier = parseFloat(document.getElementById("multiplierValue").textContent);
+      const betType = document.getElementById("betType").value;
+      const resultDiv = document.getElementById("result");
+
+      if (isNaN(betAmount) || betAmount <= 0 || betAmount > balance) {
+        resultDiv.textContent = "Please enter a valid bet amount.";
+        resultDiv.style.color = "#ff4757";
+        return;
+      }
+
+      const roll = Math.random() * 100;
+      const won = (betType === "under" && roll < winCondition) || (betType === "over" && roll > winCondition);
+
+      if (won) {
+        const winnings = betAmount * payoutMultiplier;
+        balance += winnings;
+        resultDiv.textContent = `🎉 You rolled ${roll.toFixed(2)}! You win $${winnings.toFixed(2)}!`;
+        resultDiv.style.color = "#2ed573";
+      } else {
+        balance -= betAmount;
+        resultDiv.textContent = `😢 You rolled ${roll.toFixed(2)}. You lose $${betAmount.toFixed(2)}.`;
+        resultDiv.style.color = "#ff4757";
+      }
+
+      document.getElementById("balance").textContent = `Balance: $${balance.toFixed(2)}`;
+    }
+
+    // Event Listeners
+    document.getElementById("winCondition").addEventListener("input", updateMultiplier);
+    document.getElementById("depositButton").addEventListener("click", depositMoney);
+    document.getElementById("rollButton").addEventListener("click", rollDice);
+
+    // Initialize multiplier on page load
+    updateMultiplier();
+  </script>
+</body>
+</html>
