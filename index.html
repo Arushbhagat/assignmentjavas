@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dice Game</title>
+  <link rel="stylesheet" href="style.css">
+  
+</head>
+<body>
+  <div class="container">
+    <h1>Dice Game</h1>
+    <div class="balance" id="balance">Balance: $100.00</div>
+
+    <!-- Deposit Money -->
+    <div class="input-group">
+      <input type="number" id="depositAmount" placeholder="Deposit Amount">
+      <button id="depositButton">Deposit Money</button>
+    </div>
+
+    <!-- Bet Amount -->
+    <div class="input-group">
+      <input type="number" id="betAmount" placeholder="Enter Bet Amount">
+    </div>
+
+    <!-- Bet Type -->
+    <div class="input-group">
+      <select id="betType">
+        <option value="under">Under</option>
+        <option value="over">Over</option>
+      </select>
+    </div>
+
+    <!-- Win Condition Slider -->
+    <div class="slider-container">
+      <label for="winCondition" style="color: white;">Win Condition (1-99)</label>
+      <input type="range" id="winCondition" class="slider" min="1" max="99" value="50">
+      <div class="slider-value">Win Condition: <span id="winConditionValue">50</span></div>
+    </div>
+
+    <!-- Multiplier Display -->
+    <div class="multiplier-container">
+      <label style="color: white;">Multiplier</label>
+      <div class="multiplier-value" id="multiplierValue">2.00</div>
+    </div>
+
+    <!-- Roll Button -->
+    <button id="rollButton">Roll Dice</button>
+    <div class="result" id="result">Place your bet and roll the dice!</div>
+  </div>
+
+  <footer>&copy; 2024 Arush Bhagat. All rights reserved.</footer>
+
+ 
+  <script src="script.js"></script>
+</body>
+</html>
